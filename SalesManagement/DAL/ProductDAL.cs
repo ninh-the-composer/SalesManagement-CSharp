@@ -12,6 +12,10 @@ namespace SalesManagement.DAL {
             string sql = "SELECT * FROM Products";
             return Database.GetDataBySQL(sql);
         }
+        public static DataTable SearchProductByName(string keyword) {
+            string sql = "SELECT * FROM Products where ProductName like '%"+ keyword + "%'";
+            return Database.GetDataBySQL(sql);
+        }
         public static int DeleteProduct(string id) {
             int count = 0;
             string sql = "delete from Products where ProductId = @id";

@@ -64,5 +64,22 @@ namespace SalesManagement.BL {
         public static int AddProduct(ArrayList information) {
             return ProductDAL.AddProduct(information);
         }
+        public static List<Product> SearchProductByName(string keyword) {
+            List<Product> products = new List<Product>();
+            DataTable dataTable = ProductDAL.SearchProductByName(keyword);
+            foreach (DataRow dr in dataTable.Rows) {
+                string id = dr["ProductId"].ToString();
+                string name = dr["ProductName"].ToString();
+                string catId = dr["CategoryId"].ToString();
+                string unit = dr["Unit"].ToString();
+                int price = int.Parse(dr["Price"].ToString());
+                int quantity = int.Parse(dr["Quantity"].ToString());
+                bool hasDiscontinued = bool.Parse(dr["Discontinued"].ToString());
+                DateTime createDate = DateTime.Parse(dr["CreateDate"].ToString());
+                Product product = new Product(id, name, catId, unit, price, quantity, hasDiscontinued, createDate);
+                products.Add(product);
+            }
+            return products;
+        }
     }
 }
