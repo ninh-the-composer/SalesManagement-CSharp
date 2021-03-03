@@ -22,16 +22,16 @@ namespace SalesManagement.PL {
             foreach (var p in productList) {
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(dgvProduct);
-                row.Cells[0].Value = p.Id;
-                row.Cells[1].Value = p.Name;
-                row.Cells[2].Value = p.CatId;
-                row.Cells[3].Value = p.Unit;
-                row.Cells[4].Value = p.Price;
-                row.Cells[5].Value = p.Quantity;
-                row.Cells[6].Value = p.HasDiscontinued;
-                row.Cells[7].Value = p.CreateDate.ToString("M/dd/yyyy", CultureInfo.InvariantCulture);
-                row.Cells[8].Value = "Edit";
-                row.Cells[9].Value = "Delete";
+                row.Cells[1].Value = p.Id;
+                row.Cells[2].Value = p.Name;
+                row.Cells[3].Value = p.CatId;
+                row.Cells[4].Value = p.Unit;
+                row.Cells[5].Value = p.Price;
+                row.Cells[6].Value = p.Quantity;
+                row.Cells[7].Value = p.HasDiscontinued;
+                row.Cells[8].Value = p.CreateDate.ToString("M/dd/yyyy", CultureInfo.InvariantCulture);
+                row.Cells[9].Value = "Edit";
+                row.Cells[10].Value = "Delete";
                 dgvProduct.Rows.Add(row);
             }
         }
@@ -48,7 +48,29 @@ namespace SalesManagement.PL {
             addProductForm.ShowDialog();
             RefreshTable(Product.GetAllProduct());
         }
+        private void btnDelete_Click(object sender, EventArgs e) {
+            int count = 0;
+            string message = "Delete ";
+            bool hasDeleted = false;
+            foreach (DataGridViewRow row in dgvProduct.Rows) {
+                DataGridViewCheckBoxCell chk = row.Cells[0] as DataGridViewCheckBoxCell;
+                if (Convert.ToBoolean(chk.Value) == true) {
+                    count++;
+                    string pId = row.Cells["ProductId"].Value.ToString();
+                    hasDeleted = Product.DeleteProduct(pId) > 0;
+                    if (hasDeleted) {
+                        message += pId + " ";
+                    }
+                }
+            }
 
+            if (hasDeleted) {
+                MessageBox.Show(message + " Successful.");
+                RefreshTable(Product.GetAllProduct());
+            } else {
+                MessageBox.Show(message + " Fail.");
+            }
+        }
         private void dgvProduct_CellClick(object sender, DataGridViewCellEventArgs e) {
             
         }
@@ -56,7 +78,7 @@ namespace SalesManagement.PL {
         private void dgvProduct_CellContentClick(object sender, DataGridViewCellEventArgs e) {
             if (e.RowIndex >= 0) {
                 switch (e.ColumnIndex) {
-                    case 8:
+                    case 9:
                         ArrayList information = new ArrayList();
                         for(int i = 0; i < dgvProduct.Columns.Count - 2; i++) {
                             information.Add(dgvProduct.Rows[e.RowIndex].Cells[i].Value.ToString());
@@ -70,7 +92,7 @@ namespace SalesManagement.PL {
                             RefreshTable(Product.GetAllProduct());
                         }
                         break;
-                    case 9:
+                    case 10:
                         DialogResult result = MessageBox.Show("Are you sure want to Delete " + dgvProduct.Rows[e.RowIndex].Cells[1].Value.ToString() + "?", "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
                         if(result == DialogResult.OK) {
                             if(Product.DeleteProduct(dgvProduct.Rows[e.RowIndex].Cells[0].Value.ToString()) > 0) {
@@ -88,5 +110,6 @@ namespace SalesManagement.PL {
                 }
             }
         }
+
     }
 }
